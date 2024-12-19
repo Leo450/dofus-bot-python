@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 from src.lib.overlay import Overlay
+from src.lib.struct import Vector
 from src.lib.window import Window
 from src.lib.screen_grid import ScreenGrid
 from src.lib.mouse import add_handler as add_mouse_handler
@@ -12,8 +13,7 @@ class AppGridBuilder:
         app = QApplication([])
 
         window = Window()
-        window.move_dofus_window()
-        window.focus()
+        window.init()
 
         grid = ScreenGrid(window)
         grid.disable_all()
@@ -22,8 +22,8 @@ class AppGridBuilder:
 
         # Mouse
         def on_click(x, y):
-            window_coords = window.to_viewport(x, y)
-            closest_cell = grid.get_closest_cell(*window_coords, False)
+            window_coords = window.to_viewport(Vector(x, y))
+            closest_cell = grid.get_closest_cell(*window_coords.tuple(), False)
 
             if not closest_cell: return
 

@@ -16,7 +16,7 @@ class AppBotFarm:
 
     def run(self):
         self.window = Window()
-        self.window.move_dofus_window()
+        self.window.init()
 
         self.init_overlay()
         self.init_bot()

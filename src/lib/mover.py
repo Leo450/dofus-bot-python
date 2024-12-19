@@ -4,12 +4,19 @@ from PyQt5.QtCore import QPointF
 
 import src.lib.keyboard as keyboard
 import src.lib.mouse as mouse
-from PyQt5.QtGui import QPen, QColor
+from PyQt5.QtGui import QPen, QColor, QPainter
 from src.lib.console import BCOLORS
 from src.lib.astar import PATH_LEFT, PATH_RIGHT, PATH_UP, PATH_DOWN
 from src.lib.minimap import Minimap
+from src.lib.struct import Vector
+
 
 class Mover:
+    window = None
+    overlay = None
+    map_grid = None
+    minimap_reader = None
+
     current_direction = None
     nb_direction_failed = 0
 
@@ -17,19 +24,19 @@ class Mover:
         self.window = window
         self.overlay = overlay
         self.map_grid = map_grid
-        self.minimap = Minimap(self.window)
+        self.minimap_reader = Minimap(self.window)
 
     def init(self):
-        self.minimap.update_screenshot()
+        self.minimap_reader.update_screenshot()
 
-    async def go_to_map_cell(self, start_coords, end_coords):
-        print(BCOLORS.colorize(' >> Moving: from {} to {} '.format(start_coords, end_coords), BCOLORS.BG_LIGHT_PURPLE + BCOLORS.BLACK + BCOLORS.BOLD))
-        path = self.map_grid.get_path(start_coords, end_coords)
+    async def go_to_map_cell(self, start: Vector, end: Vector):
+        print(BCOLORS.colorize(' >> Moving: from {} to {} '.format((start.x, start.y), (end.x, end.y)), BCOLORS.BG_LIGHT_PURPLE + BCOLORS.BLACK + BCOLORS.BOLD))
+        path = self.map_grid.get_path(start, end)
         print(BCOLORS.purple('> Path: {}'.format(path)))
         await self.go_to_path(path)
-        print(BCOLORS.green('> Arrived at: {}'.format(end_coords)))
+        print(BCOLORS.green('> Arrived at: {}'.format((end.x, end.y))))
 
-    async def go_to_path(self, path):
+    async def go_to_path(self, path: list):
         if len(path) == 0:
             return
 
@@ -63,38 +70,38 @@ class Mover:
         keyboard.controller.release(key)
 
         print(BCOLORS.grey('Waiting for minimap update...'))
-        if not await self.minimap.wait_update():
+        if not await self.minimap_reader.wait_update():
             self.nb_direction_failed += 1
             if self.nb_direction_failed >= 3:
                 raise Exception('Too many minimap update detection failed')
             print(BCOLORS.red('> No minimap update detected, retrying direction: {}'.format(direction)))
             self.window.focus()
-            mouse.move(self.window.screen_size[0] / 2, self.window.screen_size[1] / 2)
+            mouse.move(self.window.screen_size.x / 2, self.window.screen_size.y / 2)
             await self.go_to_direction(direction)
         else:
             self.nb_direction_failed = 0
 
-    def draw(self, painter):
+    def draw(self, painter: QPainter):
         if self.current_direction is None: return
 
         painter.setPen(QPen(QColor(255, 255, 255), 20))
         if self.current_direction == PATH_LEFT:
             # Draw arrow left
-            point = (self.window.x_overflow, self.window.viewport_size[1] / 2)
-            painter.drawLine(QPointF(*point), QPointF(point[0] + 100, point[1] - 100))
-            painter.drawLine(QPointF(*point), QPointF(point[0] + 100, point[1] + 100))
+            point = Vector(self.window.x_overflow, self.window.viewport_size.y / 2)
+            painter.drawLine(QPointF(*point.tuple()), QPointF(point.x + 100, point.y - 100))
+            painter.drawLine(QPointF(*point.tuple()), QPointF(point.x + 100, point.y + 100))
         elif self.current_direction == PATH_RIGHT:
             # Draw arrow right
-            point = (self.window.viewport_size[0] - self.window.x_overflow, self.window.viewport_size[1] / 2)
-            painter.drawLine(QPointF(*point), QPointF(point[0] - 100, point[1] - 100))
-            painter.drawLine(QPointF(*point), QPointF(point[0] - 100, point[1] + 100))
+            point = Vector(self.window.viewport_size.x - self.window.x_overflow, self.window.viewport_size.y / 2)
+            painter.drawLine(QPointF(*point.tuple()), QPointF(point.x - 100, point.y - 100))
+            painter.drawLine(QPointF(*point.tuple()), QPointF(point.x - 100, point.y + 100))
         elif self.current_direction == PATH_UP:
             # Draw arrow up
-            point = (self.window.viewport_size[0] / 2, 0)
-            painter.drawLine(QPointF(*point), QPointF(point[0] - 100, point[1] + 100))
-            painter.drawLine(QPointF(*point), QPointF(point[0] + 100, point[1] + 100))
+            point = Vector(self.window.viewport_size.x / 2, 0)
+            painter.drawLine(QPointF(*point.tuple()), QPointF(point.x - 100, point.y + 100))
+            painter.drawLine(QPointF(*point.tuple()), QPointF(point.x + 100, point.y + 100))
         elif self.current_direction == PATH_DOWN:
             # Draw arrow down
-            point = (self.window.viewport_size[0] / 2, self.window.viewport_size[1])
-            painter.drawLine(QPointF(*point), QPointF(point[0] - 100, point[1] - 100))
-            painter.drawLine(QPointF(*point), QPointF(point[0] + 100, point[1] - 100))
+            point = Vector(self.window.viewport_size.x / 2, self.window.viewport_size.y)
+            painter.drawLine(QPointF(*point.tuple()), QPointF(point.x - 100, point.y - 100))
+            painter.drawLine(QPointF(*point.tuple()), QPointF(point.x + 100, point.y - 100))

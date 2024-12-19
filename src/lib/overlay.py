@@ -16,7 +16,7 @@ class Overlay(QWidget):
         self.setAttribute(Qt.WA_TransparentForMouseEvents)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
-        self.setGeometry(window.viewport_rect[0], window.viewport_rect[1], window.viewport_size[0], window.viewport_size[1])
+        self.setGeometry(window.viewport_rect.min.x, window.viewport_rect.min.y, window.viewport_size.x, window.viewport_size.y)
 
         self.show()
 

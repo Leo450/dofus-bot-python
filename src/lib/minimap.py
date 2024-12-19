@@ -1,12 +1,13 @@
 import time
 import asyncio
-
 from src.lib.console import BCOLORS
 from src.lib.screen import get_region_pixmap, pixmap_to_pixels
+from src.lib.struct import Vector
 
 DEBUG_SCREENSHOTS = False
 
 class Minimap:
+    window = None
     screenshot = None
     wait_update_start_time = None
 
@@ -14,8 +15,8 @@ class Minimap:
         self.window = window
 
     def get_screenshot_pixmap(self):
-        screen_bottom_right = self.window.viewport_rect[2], self.window.viewport_rect[3]
-        return get_region_pixmap(int(screen_bottom_right[0] - 100), int(screen_bottom_right[1] - 100), 90, 90)
+        screen_bottom_right = self.window.viewport_rect.bottom_right()
+        return get_region_pixmap(screen_bottom_right + Vector(-100, -100), Vector(90, 90))
 
     def update_screenshot(self):
         pixmap = self.get_screenshot_pixmap()

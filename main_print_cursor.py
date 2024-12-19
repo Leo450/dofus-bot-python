@@ -1,5 +1,5 @@
-from src.apps.AppGridBuilder import AppGridBuilder
+from src.apps.AppPrintCursor import AppPrintCursor
 
 if __name__ == '__main__':
-    app = AppGridBuilder()
+    app = AppPrintCursor()
     app.run()

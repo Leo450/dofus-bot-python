@@ -1,5 +1,7 @@
 import numpy
 from astar.search import AStar
+from src.lib.struct import Vector
+
 
 DEBUG_MAZE = False
 
@@ -8,15 +10,15 @@ PATH_RIGHT = 'right'
 PATH_UP = 'up'
 PATH_DOWN = 'down'
 
-def astar(maze, start, end):
+def astar(maze: list, start: Vector, end: Vector):
     if DEBUG_MAZE:
         print("Start: ", start)
         print("End: ", end)
         print(numpy.matrix(maze))
 
-    return AStar(maze).search((start[1], start[0]), (end[1], end[0]))
+    return AStar(maze).search((start.y, start.x), (end.y, end.x))
 
-def path_to_directions(path):
+def path_to_directions(path: list):
     directions = []
     for i in range(1, len(path)):
         prev_coords = (path[i-1][1], path[i-1][0])

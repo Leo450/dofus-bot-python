@@ -18,7 +18,7 @@ handlers = {}
 def on_click(screen_x, screen_y, button, pressed):
     if 'click' not in handlers: return
     screen_size = get_screen_size()
-    if pressed and screen_x >= 0 and screen_y >= 0 and screen_x < screen_size[0] and screen_y < screen_size[1]:
+    if pressed and screen_x >= 0 and screen_y >= 0 and screen_x < screen_size.x and screen_y < screen_size.y:
         print('Mouse clicked at ({0}, {1})'.format(screen_x, screen_y))
         for handler in handlers['click']:
             handler(screen_x, screen_y)

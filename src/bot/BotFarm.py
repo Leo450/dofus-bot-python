@@ -2,18 +2,20 @@ import asyncio
 import src.lib.mouse as mouse
 from src.lib.console import BCOLORS
 from src.lib.inventory import Inventory
-from src.lib.map_grid_coords import MapGridCoords
+from src.lib.player_coords import PlayerCoords
 from src.lib.mover import Mover
 from src.lib.resource import RESOURCE_CROP, RESOURCE_PLANT
 from src.config.bot_farm_config import config
+from src.lib.struct import Vector
+
 
 class BotFarm:
     map_grid = None
-    inventory = None
-    map_grid_coords = None
+    inventory_reader = None
+    player_coords_reader = None
     mover = None
 
-    player_map_coords = None
+    player_coords = None
     farm_speed = 0.1
     nb_loop = 0
 
@@ -34,33 +36,33 @@ class BotFarm:
 
     async def start(self):
         self.map_grid = config['map_grid'](self.window, config['resource_filter'])
-        self.map_grid_coords = MapGridCoords(self.window)
-        self.inventory = Inventory(self.window)
+        self.player_coords_reader = PlayerCoords(self.window)
+        self.inventory_reader = Inventory(self.window)
         self.mover = Mover(self.window, self.overlay, self.map_grid)
 
         self.window.focus()
         await asyncio.sleep(1)
 
-        self.map_grid_coords.init()
-        self.inventory.init()
+        self.player_coords_reader.init()
+        self.inventory_reader.init()
         self.mover.init()
 
-        if self.map_grid_coords.start_coords is not None:
-            self.player_map_coords = self.map_grid_coords.start_coords
-            print(BCOLORS.colorize(' >>>> START at: {} (OCR) <<<< '.format(self.player_map_coords), BCOLORS.BG_WHITE + BCOLORS.BLACK + BCOLORS.BOLD))
+        if self.player_coords_reader.start_coords is not None:
+            self.player_coords = self.player_coords_reader.start_coords
+            print(BCOLORS.colorize(' >>>> START at: {} (OCR) <<<< '.format(self.player_coords), BCOLORS.BG_WHITE + BCOLORS.BLACK + BCOLORS.BOLD))
         else:
-            self.player_map_coords = config['start_coords']
-            print(BCOLORS.colorize(' >>>> START at: {} (config) <<<< '.format(self.player_map_coords), BCOLORS.BG_WHITE + BCOLORS.BLACK + BCOLORS.BOLD))
+            self.player_coords = config['start_coords']
+            print(BCOLORS.colorize(' >>>> START at: {} (config) <<<< '.format(self.player_coords), BCOLORS.BG_WHITE + BCOLORS.BLACK + BCOLORS.BOLD))
 
-        self.overlay.set_drawable('inventory', self.inventory)
-        self.overlay.set_drawable('map_grid_coords', self.map_grid_coords)
+        self.overlay.set_drawable('inventory', self.inventory_reader)
+        self.overlay.set_drawable('player_coords', self.player_coords_reader)
 
         while True:
             print(BCOLORS.colorize(' -- NEW LOOP -- ', BCOLORS.BG_LIGHT_YELLOW + BCOLORS.BLACK))
 
             if self.nb_loop == 0:
                 await asyncio.sleep(1)
-                mouse.move(self.window.screen_size[0] / 2, self.window.screen_size[1] / 2)
+                mouse.move(self.window.screen_size.x / 2, self.window.screen_size.y / 2)
                 await asyncio.sleep(1)
 
             await self.farm_next_map_cell()
@@ -78,13 +80,13 @@ class BotFarm:
             raise Exception('No enabled map cell')
 
         #print(BCOLORS.grey('Player is at: {}'.format(self.player_map_coords)))
-        closest_cell = self.map_grid.get_closest_cell(*self.player_map_coords, self.visited_map_cells)
+        closest_cell = self.map_grid.get_closest_cell(*self.player_coords.tuple(), self.visited_map_cells)
         #print(BCOLORS.grey('Closest cell: {}'.format(closest_cell.coords)))
 
-        if closest_cell.coords != self.player_map_coords:
+        if closest_cell.coords != self.player_coords:
             print(BCOLORS.red('> Player is not on closest map cell'))
-            await self.mover.go_to_map_cell(self.player_map_coords, closest_cell.coords)
-            self.player_map_coords = closest_cell.coords
+            await self.mover.go_to_map_cell(self.player_coords, closest_cell.coords)
+            self.player_coords = closest_cell.coords
         else:
             print(BCOLORS.green('> Player is on closest map cell'))
 
@@ -92,14 +94,18 @@ class BotFarm:
         await self.farm_next_map_cell()
 
     async def farm_current_map_cell(self):
-        self.load_screen_grid(self.player_map_coords)
+        self.load_screen_grid(self.player_coords)
         await self.farm_next_screen_cell()
         self.reset_screen()
 
-    def load_screen_grid(self, coords):
+    def load_screen_grid(self, coords: Vector):
         print(BCOLORS.colorize(' >> Farming at: {} '.format(coords), BCOLORS.BG_LIGHT_PURPLE + BCOLORS.BLACK + BCOLORS.BOLD))
 
-        self.current_map_cell = self.map_grid.get_cell(*coords)
+        self.current_map_cell = self.map_grid.get_cell(*coords.tuple())
+
+        if self.current_map_cell is None or self.current_map_cell.screen_grid is None:
+            raise Exception('Invalid map cell')
+
         self.nb_screen_cell = self.current_map_cell.screen_grid.get_nb_enabled_cells()
         self.visited_map_cells.append(self.current_map_cell)
         #print(BCOLORS.grey('Number of screen cells: {}'.format(self.nb_screen_cell)))
@@ -111,7 +117,7 @@ class BotFarm:
         if self.current_screen_cell is None:
             self.current_screen_cell = self.current_map_cell.screen_grid.get_last_enabled_cell()
         else:
-            self.current_screen_cell = self.current_map_cell.screen_grid.get_prev_cell(*self.current_screen_cell.coords)
+            self.current_screen_cell = self.current_map_cell.screen_grid.get_prev_cell(self.current_screen_cell.coords)
             if self.current_screen_cell is None:
                 self.current_screen_cell = self.current_map_cell.screen_grid.get_last_enabled_cell()
 
@@ -134,7 +140,7 @@ class BotFarm:
 
             # Wait for inventory update
             print(BCOLORS.grey('Waiting for inventory update...'))
-            success = await self.inventory.wait_update()
+            success = await self.inventory_reader.wait_update()
             if not success:
                 print(BCOLORS.red('> Gathering failed at: {}'.format(self.current_screen_cell.coords)))
                 self.failed_screen_cells.append(self.current_screen_cell)
@@ -167,10 +173,10 @@ class BotFarm:
         if cell.resource_node in RESOURCE_CROP:
             # Move mouse to top of cell
             mouse.move(
-                *self.window.to_screen(
-                    cell.vertices['top'][0] + cell.resource_mouse_offset[0],
-                    cell.vertices['top'][1] - self.current_map_cell.screen_grid.cell_size[1] / 2 + cell.resource_mouse_offset[1]
-                )
+                *self.window.to_screen(Vector(
+                    cell.vertices['top'].x + cell.resource_mouse_offset.x,
+                    cell.vertices['top'].y - self.current_map_cell.screen_grid.cell_size.y / 2 + cell.resource_mouse_offset.y
+                )).tuple()
             )
             await asyncio.sleep(0.05)
             return mouse.cursor_is_gather_crop()
@@ -178,10 +184,10 @@ class BotFarm:
         if cell.resource_node in RESOURCE_PLANT:
             # Move mouse to cell center
             mouse.move(
-                *self.window.to_screen(
-                    cell.vertices['center'][0] + cell.resource_mouse_offset[0],
-                    cell.vertices['center'][1] + cell.resource_mouse_offset[1]
-                )
+                *self.window.to_screen(Vector(
+                    cell.rect.center().x + cell.resource_mouse_offset.x,
+                    cell.rect.center().y + cell.resource_mouse_offset.y
+                )).tuple()
             )
             await asyncio.sleep(0.05)
             return mouse.cursor_is_gather_plant()
