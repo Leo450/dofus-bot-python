@@ -17,7 +17,7 @@ class Window:
 
     def __init__(self):
         self.screen_size = get_screen_size()
-        self.x_overflow = self.screen_size.y / 3
+        self.x_overflow = self.screen_size.y / 2
 
     def init(self):
         self.hwnd = self.find_window()

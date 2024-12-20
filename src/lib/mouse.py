@@ -7,6 +7,8 @@ from src.lib.screen import get_screen_size
 
 
 # Read cursor images
+cursor_gather_water_image = Image.open("assets/cursor_gather_water.bmp")
+cursor_gather_water_pixels = list(cursor_gather_water_image.getdata())
 cursor_gather_crop_image = Image.open("assets/cursor_gather_crop.bmp")
 cursor_gather_crop_pixels = list(cursor_gather_crop_image.getdata())
 cursor_gather_plant_image = Image.open("assets/cursor_gather_plant.bmp")
@@ -41,6 +43,9 @@ controller = mouse.Controller()
 # Functions
 def get_cursor_code():
     return win32gui.GetCursorInfo()[1]
+
+def cursor_is_gather_water():
+    return get_cursor_pixels() == cursor_gather_water_pixels
 
 def cursor_is_gather_crop():
     return get_cursor_pixels() == cursor_gather_crop_pixels

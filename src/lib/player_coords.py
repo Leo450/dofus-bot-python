@@ -42,7 +42,7 @@ class PlayerCoords:
         self.take_screenshot()
         self.prev_ocr_str = pytesseract.image_to_string(Image.open('.cache/map_grid_coords.png'), lang='fra', config='--psm 6')
         self.prev_lines = self.prev_ocr_str.splitlines()
-        if len(self.prev_lines) > 0:
+        if len(self.prev_lines) > 1:
             second_line = self.prev_lines[1]
             self.prev_split = re.findall(r'[-+]?\d+', second_line.replace('A', '4'))
             if len(self.prev_split) >= 2:

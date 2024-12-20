@@ -4,7 +4,7 @@ from src.lib.console import BCOLORS
 from src.lib.inventory import Inventory
 from src.lib.player_coords import PlayerCoords
 from src.lib.mover import Mover
-from src.lib.resource import RESOURCE_CROP, RESOURCE_PLANT
+from src.lib.resource import RESOURCE_CROP, RESOURCE_PLANT, RESOURCE_WATER
 from src.config.bot_farm_config import config
 from src.lib.struct import Vector
 
@@ -172,9 +172,6 @@ class BotFarm:
         else:
             self.nb_empty_cell += 1
 
-            # Sleep: prevent cursor still success after fast switch
-            await asyncio.sleep(0.1)
-
             self.current_screen_cell.highlighted = False
             self.overlay.update()
 
@@ -186,6 +183,17 @@ class BotFarm:
 
     async def cursor_check(self):
         cell = self.current_screen_cell
+
+        if cell.resource_node is RESOURCE_WATER:
+            # Move mouse to cell center
+            mouse.move(
+                *self.window.to_screen(Vector(
+                    cell.rect.center().x + cell.resource_mouse_offset.x,
+                    cell.rect.center().y + cell.resource_mouse_offset.y
+                )).tuple()
+            )
+            await asyncio.sleep(0.05)
+            return mouse.cursor_is_gather_water()
 
         if cell.resource_node in RESOURCE_CROP:
             # Move mouse to top of cell
