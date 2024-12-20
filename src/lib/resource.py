@@ -19,12 +19,32 @@ RESOURCE_HOPS = {
     'name': 'Hops',
     'overlay_color': (0, 255, 0),
 }
+# Lin
+RESOURCE_FLAX = {
+    'name': 'Flax',
+    'overlay_color': (0, 255, 0),
+}
 # Seigle
 RESOURCE_RYE = {
     'name': 'Rye',
     'overlay_color': (255, 255, 255),
 }
-RESOURCE_CROP = [RESOURCE_WHEAT, RESOURCE_BARLEY, RESOURCE_OAT, RESOURCE_HOPS, RESOURCE_RYE]
+# Malt
+RESOURCE_MALT = {
+    'name': 'Malt',
+    'overlay_color': (0, 255, 0),
+}
+# Chanvre
+RESOURCE_HEMP = {
+    'name': 'Hemp',
+    'overlay_color': (0, 255, 0),
+}
+RESOURCE_CROP = [RESOURCE_WHEAT, RESOURCE_BARLEY, RESOURCE_OAT, RESOURCE_HOPS, RESOURCE_FLAX, RESOURCE_RYE, RESOURCE_MALT, RESOURCE_HEMP]
+RESOURCE_CROP_0 = [RESOURCE_WHEAT]
+RESOURCE_CROP_20 = [RESOURCE_BARLEY]
+RESOURCE_CROP_40 = [RESOURCE_OAT]
+RESOURCE_CROP_60 = [RESOURCE_HOPS]
+RESOURCE_CROP_80 = [RESOURCE_FLAX]
 
 # ---- PLANTS ----
 # Ortie

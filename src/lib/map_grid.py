@@ -119,11 +119,19 @@ class MapGrid:
                 if not cell.enabled: continue
                 cell.apply_resource_filter(resource_filter)
 
-    def debug(self):
+    def debug_coords(self):
         matrix = [[(0, 0) for x in range(self.size.x)] for y in range(self.size.y)]
         for row in range(self.size.y):
             for col in range(self.size.x):
                 matrix[row][col] = f'{self.cells[row][col].coords.x},{self.cells[row][col].coords.y}'
+
+        print(numpy.matrix(matrix))
+
+    def debug_screen_grid(self):
+        matrix = [[0 for x in range(self.size.x)] for y in range(self.size.y)]
+        for row in range(self.size.y):
+            for col in range(self.size.x):
+                matrix[row][col] = 1 if self.cells[row][col].screen_grid is not None and self.cells[row][col].screen_grid.get_nb_enabled_cells() > 0 else 0
 
         print(numpy.matrix(matrix))
 
@@ -147,7 +155,7 @@ class MapGrid:
                 exists = importlib.util.find_spec(f'src.screen_grid.{name}')
                 if exists is not None:
                     screen_grid_module = importlib.import_module(f'src.screen_grid.{name}')
-                    cell.set_screen_grid(screen_grid_module.__dict__[name](window))
+                    cell.set_screen_grid(screen_grid_module.screen_grid(window))
 
                 grid.set_cell(cell)
 

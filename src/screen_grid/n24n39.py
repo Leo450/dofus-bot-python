@@ -1,45 +1,51 @@
 from src.lib.screen_grid import ScreenGrid
 from src.lib.resource import RESOURCE_WHEAT, RESOURCE_BARLEY, RESOURCE_HOPS
 
-def n24n39(window):
+def screen_grid(window):
     grid = ScreenGrid(window)
 
-    grid.get_cell(2, 2).set_resource_node(RESOURCE_BARLEY)
-    grid.get_cell(3, 1).set_resource_node(RESOURCE_BARLEY)
-    grid.get_cell(4, 2).set_resource_node(RESOURCE_BARLEY)
-    grid.get_cell(4, 3).set_resource_node(RESOURCE_BARLEY)
-    grid.get_cell(5, 1).set_resource_node(RESOURCE_BARLEY)
+    grid.set_resource_nodes(RESOURCE_BARLEY, [
+        (2, 2),
+        (3, 1),
+        (4, 2),
+        (4, 3),
+        (5, 1)
+    ])
 
-    grid.get_cell(9, 10).set_resource_node(RESOURCE_HOPS)
-    grid.get_cell(9, 11).set_resource_node(RESOURCE_HOPS)
-    grid.get_cell(10, 12).set_resource_node(RESOURCE_HOPS)
-    grid.get_cell(11, 10).set_resource_node(RESOURCE_HOPS)
-    grid.get_cell(11, 12).set_resource_node(RESOURCE_HOPS)
-    grid.get_cell(12, 10).set_resource_node(RESOURCE_HOPS)
-    grid.get_cell(12, 11).set_resource_node(RESOURCE_HOPS)
-    grid.get_cell(12, 12).set_resource_node(RESOURCE_HOPS)
-    grid.get_cell(12, 13).set_resource_node(RESOURCE_HOPS)
-    grid.get_cell(13, 12).set_resource_node(RESOURCE_HOPS)
-    grid.get_cell(14, 11).set_resource_node(RESOURCE_HOPS)
-    grid.get_cell(15, 11).set_resource_node(RESOURCE_HOPS)
-    grid.get_cell(15, 12).set_resource_node(RESOURCE_HOPS)
-    grid.get_cell(17, 11).set_resource_node(RESOURCE_HOPS)
+    grid.set_resource_nodes(RESOURCE_HOPS, [
+        (9, 10),
+        (9, 11),
+        (10, 12),
+        (11, 10),
+        (11, 12),
+        (12, 10),
+        (12, 11),
+        (12, 12),
+        (12, 13),
+        (13, 12),
+        (14, 11),
+        (15, 11),
+        (15, 12),
+        (17, 11)
+    ])
 
-    grid.get_cell(26, 4).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(27, 3).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(27, 4).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(28, 3).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(28, 4).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(28, 5).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(29, 2).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(29, 3).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(29, 4).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(30, 2).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(30, 3).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(30, 4).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(30, 5).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(31, 4).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(32, 3).set_resource_node(RESOURCE_WHEAT)
-    grid.get_cell(32, 4).set_resource_node(RESOURCE_WHEAT)
+    grid.set_resource_nodes(RESOURCE_WHEAT, [
+        (26, 4),
+        (27, 3),
+        (27, 4),
+        (28, 3),
+        (28, 4),
+        (28, 5),
+        (29, 2),
+        (29, 3),
+        (29, 4),
+        (30, 2),
+        (30, 3),
+        (30, 4),
+        (30, 5),
+        (31, 4),
+        (32, 3),
+        (32, 4)
+    ])
 
     return grid

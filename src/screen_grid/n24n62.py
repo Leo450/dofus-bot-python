@@ -2,11 +2,11 @@ from src.lib.screen_grid import ScreenGrid
 from src.lib.resource import RESOURCE_NETTLE, RESOURCE_SAGE
 
 
-def n24n62(window):
+def screen_grid(window):
     grid = ScreenGrid(window)
 
-    grid.get_cell(10, 8).set_resource_node(RESOURCE_NETTLE)
+    grid.set_resource_node(RESOURCE_NETTLE, (10, 8))
 
-    grid.get_cell(22, 6).set_resource_node(RESOURCE_SAGE)
+    grid.set_resource_node(RESOURCE_SAGE, (22, 6))
 
     return grid

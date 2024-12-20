@@ -1,18 +1,20 @@
 from src.lib.screen_grid import ScreenGrid
 from src.lib.resource import RESOURCE_OAT
 
-def n28n37(window):
+def screen_grid(window):
     grid = ScreenGrid(window)
 
-    grid.get_cell(25, 7).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(26, 7).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(26, 8).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(27, 6).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(29, 5).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(29, 6).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(29, 7).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(29, 8).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(31, 6).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(31, 7).set_resource_node(RESOURCE_OAT)
+    grid.set_resource_nodes(RESOURCE_OAT, [
+        (25, 7),
+        (26, 7),
+        (26, 8),
+        (27, 6),
+        (29, 5),
+        (29, 6),
+        (29, 7),
+        (29, 8),
+        (31, 6),
+        (31, 7)
+    ])
 
     return grid

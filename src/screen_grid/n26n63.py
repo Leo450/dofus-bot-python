@@ -1,9 +1,9 @@
 from src.lib.screen_grid import ScreenGrid
 from src.lib.resource import RESOURCE_NETTLE
 
-def n26n63(window):
+def screen_grid(window):
     grid = ScreenGrid(window)
 
-    grid.get_cell(10, 12).set_resource_node(RESOURCE_NETTLE)
+    grid.set_resource_node(RESOURCE_NETTLE, (10, 12))
 
     return grid

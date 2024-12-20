@@ -30,6 +30,9 @@ class Vector:
     def int(self):
         return Vector(int(self.x), int(self.y))
 
+    def flip(self):
+        return Vector(self.y, self.x)
+
 class Rect:
     min = Vector(0, 0)
     max = Vector(0, 0)

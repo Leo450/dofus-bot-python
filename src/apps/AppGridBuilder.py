@@ -27,18 +27,18 @@ class AppGridBuilder:
 
             if not closest_cell: return
 
-            print(closest_cell.coords)
+            print(closest_cell.coords.flip())
 
             if closest_cell.enabled:
-                grid.disable_cell(*closest_cell.coords)
+                grid.disable_cell(closest_cell.coords.y, closest_cell.coords.x)
             else:
-                grid.enable_cell(*closest_cell.coords)
+                grid.enable_cell(closest_cell.coords.y, closest_cell.coords.x)
             overlay.set_drawable('grid', grid)
             overlay.update()
 
         def on_keyboard():
             for cell in grid.get_enabled_cells():
-                print(cell.coords)
+                print(f'{cell.coords.flip()},')
         add_keyboard_handler('²', on_keyboard)
 
         add_mouse_handler('click', on_click)

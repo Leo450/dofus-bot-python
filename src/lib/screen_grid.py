@@ -118,6 +118,14 @@ class ScreenGrid:
                     enabled_cells.append(cell)
         return enabled_cells
 
+    def set_resource_nodes(self, resource_node, coords_list):
+        for coords in coords_list:
+            cell = self.get_cell(*coords)
+            cell.set_resource_node(resource_node)
+
+    def set_resource_node(self, resource_node, coords):
+        return self.get_cell(*coords).set_resource_node(resource_node)
+
     def apply_resource_filter(self, resource_filter=None):
         if resource_filter is None: return
         for row in range(self.dimension.x):

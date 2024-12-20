@@ -1,27 +1,31 @@
 from src.lib.screen_grid import ScreenGrid
 from src.lib.resource import RESOURCE_BARLEY, RESOURCE_OAT
 
-def n29n39(window):
+def screen_grid(window):
     grid = ScreenGrid(window)
 
-    grid.get_cell(17, 5).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(18, 5).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(18, 6).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(19, 6).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(20, 7).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(21, 7).set_resource_node(RESOURCE_OAT)
-    grid.get_cell(22, 7).set_resource_node(RESOURCE_OAT)
+    grid.set_resource_nodes(RESOURCE_OAT, [
+        (17, 5),
+        (18, 5),
+        (18, 6),
+        (19, 6),
+        (20, 7),
+        (21, 7),
+        (22, 7)
+    ])
 
-    grid.get_cell(19, 10).set_resource_node(RESOURCE_BARLEY)
-    grid.get_cell(20, 10).set_resource_node(RESOURCE_BARLEY)
-    grid.get_cell(20, 11).set_resource_node(RESOURCE_BARLEY)
-    grid.get_cell(21, 9).set_resource_node(RESOURCE_BARLEY)
-    grid.get_cell(21, 10).set_resource_node(RESOURCE_BARLEY)
-    grid.get_cell(21, 11).set_resource_node(RESOURCE_BARLEY)
-    grid.get_cell(22, 9).set_resource_node(RESOURCE_BARLEY)
-    grid.get_cell(22, 10).set_resource_node(RESOURCE_BARLEY)
-    grid.get_cell(23, 9).set_resource_node(RESOURCE_BARLEY)
-    grid.get_cell(23, 10).set_resource_node(RESOURCE_BARLEY)
-    grid.get_cell(24, 10).set_resource_node(RESOURCE_BARLEY)
+    grid.set_resource_nodes(RESOURCE_BARLEY, [
+        (19, 10),
+        (20, 10),
+        (20, 11),
+        (21, 9),
+        (21, 10),
+        (21, 11),
+        (22, 9),
+        (22, 10),
+        (23, 9),
+        (23, 10),
+        (24, 10)
+    ])
 
     return grid

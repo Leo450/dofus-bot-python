@@ -15,7 +15,6 @@ class ScreenCell:
         'right': None,
         'bottom': None
     }
-    mouse_target = 'center'
     resource_node = None
     resource_mouse_offset = Vector(0, 0)
     highlighted = False

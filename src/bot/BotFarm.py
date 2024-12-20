@@ -145,6 +145,9 @@ class BotFarm:
                 print(BCOLORS.red('> Gathering failed at: {}'.format(self.current_screen_cell.coords)))
                 self.failed_screen_cells.append(self.current_screen_cell)
 
+            if self.inventory_reader.is_full():
+                raise Exception('Inventory is full')
+
             await asyncio.sleep(self.farm_speed)
             self.current_screen_cell.highlighted = False
             self.overlay.update()
