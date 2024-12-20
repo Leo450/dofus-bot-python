@@ -5,6 +5,7 @@ from PIL import Image
 from src.lib.console import BCOLORS
 from src.lib.screen import get_screen_size
 
+
 # Read cursor images
 cursor_gather_crop_image = Image.open("assets/cursor_gather_crop.bmp")
 cursor_gather_crop_pixels = list(cursor_gather_crop_image.getdata())

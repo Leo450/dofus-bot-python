@@ -1,8 +1,10 @@
 from src.lib.screen_grid import ScreenGrid
-from src.lib.resource import RESOURCE_HOPS
+from src.lib.resource import RESOURCE_SAGE, RESOURCE_HOPS
 
 def screen_grid(window):
     grid = ScreenGrid(window)
+
+    grid.set_resource_node(RESOURCE_SAGE, (30, 10))
 
     grid.set_resource_nodes(RESOURCE_HOPS, [
         (21, 7),

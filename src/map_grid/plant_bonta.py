@@ -16,4 +16,6 @@ def plant_bonta(window, resource_filter=None):
     )
     grid.apply_resource_filter(resource_filter)
 
+    grid.debug_screen_grid()
+
     return grid

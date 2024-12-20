@@ -1,7 +1,5 @@
 import importlib
-
 import numpy
-
 from src.lib.astar import astar, path_to_directions
 from src.lib.map_cell import MapCell
 from src.lib.struct import Vector, Rect
@@ -16,7 +14,7 @@ class MapGrid:
     def __init__(self, top_left: Vector, size: Vector):
         self.top_left = top_left
         self.size = size
-        self.cells = [[None for x in range(size.x)] for y in range(size.y)]
+        self.cells = [[MapCell(0, 0) for x in range(size.x)] for y in range(size.y)]
 
     def to_absolute_coords(self, x, y):
         return Vector(self.top_left.x + x, self.top_left.y + y)
@@ -34,7 +32,7 @@ class MapGrid:
     def get_cell(self, x, y):
         return self.get_cell_absolute(x, y)
 
-    def set_cell(self, cell):
+    def set_cell(self, cell: MapCell):
         relative_coords = self.to_relative_coords(*cell.coords.tuple())
         self.cells[relative_coords.y][relative_coords.x] = cell
 
@@ -120,7 +118,7 @@ class MapGrid:
                 cell.apply_resource_filter(resource_filter)
 
     def debug_coords(self):
-        matrix = [[(0, 0) for x in range(self.size.x)] for y in range(self.size.y)]
+        matrix = [['' for x in range(self.size.x)] for y in range(self.size.y)]
         for row in range(self.size.y):
             for col in range(self.size.x):
                 matrix[row][col] = f'{self.cells[row][col].coords.x},{self.cells[row][col].coords.y}'

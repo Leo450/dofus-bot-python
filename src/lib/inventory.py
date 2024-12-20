@@ -1,101 +1,13 @@
 import time
 import asyncio
-from PyQt5.QtCore import QPointF
 from PyQt5.QtGui import QPen, QColor, QPainter
 from src.lib.console import BCOLORS
 from src.lib.color import similar
-from src.lib.screen import get_region_pixmap, get_pixel_color, pixmap_to_pixels
-from src.lib.struct import Vector, Rect
+from src.lib.inventory_gauge import InventoryGauge
+from src.lib.inventory_slot import InventorySlot
+from src.lib.screen import get_pixel_color
+from src.lib.struct import Vector
 
-DEBUG_SLOTS_SCREENSHOTS = False
-DEBUG_GAUGE_SCREENSHOT = True
-
-class InventorySlot:
-    window = None
-    coords = None
-    size = None
-    rect = None
-    screenshot = None
-
-    def __init__(self, window, coords: Vector, center: Vector, size: Vector):
-        self.window = window
-        self.coords = coords
-        self.size = size
-        self.rect = Rect(
-            center.x - size.x / 2,
-            center.y - size.y / 2,
-            center.x + size.x / 2,
-            center.y + size.y / 2
-        )
-
-    def get_screenshot_pixmap(self):
-        screen_top_left = self.window.to_screen(self.rect.top_left())
-        return get_region_pixmap(screen_top_left, self.size)
-
-    def update_screenshot(self):
-        pixmap = self.get_screenshot_pixmap()
-        if DEBUG_SLOTS_SCREENSHOTS: pixmap.save('slot_{}_{}.png'.format(*self.coords.tuple()))
-        self.screenshot = pixmap_to_pixels(pixmap)
-
-    def has_changed(self):
-        pixmap = self.get_screenshot_pixmap()
-        if DEBUG_SLOTS_SCREENSHOTS: pixmap.save('slot_{}_{}_check.png'.format(*self.coords.tuple()))
-        return self.screenshot != pixmap_to_pixels(pixmap)
-
-    def draw(self, painter: QPainter):
-        painter.setPen(QPen(QColor(0, 255, 0), 1))
-        rect = self.rect.expand(1)
-        painter.drawLine(QPointF(*rect.top_left().tuple()), QPointF(*rect.top_right().tuple()))
-        painter.drawLine(QPointF(*rect.top_right().tuple()), QPointF(*rect.bottom_right().tuple()))
-        painter.drawLine(QPointF(*rect.bottom_right().tuple()), QPointF(*rect.bottom_left().tuple()))
-        painter.drawLine(QPointF(*rect.bottom_left().tuple()), QPointF(*rect.top_left().tuple()))
-
-class InventoryGauge:
-    window = None
-    size = None
-    rect = None
-    screenshot = None
-    
-    def __init__(self, window, top_left: Vector, size: Vector):
-        self.window = window
-        self.size = size
-        self.rect = Rect(
-            top_left.x,
-            top_left.y,
-            top_left.x + size.x,
-            top_left.y + size.y
-        )
-
-    def get_screenshot_pixmap(self):
-        screen_top_left = self.window.to_screen(self.rect.top_left())
-        return get_region_pixmap(screen_top_left, self.size)
-
-    def update_screenshot(self):
-        pixmap = self.get_screenshot_pixmap()
-        if DEBUG_GAUGE_SCREENSHOT: pixmap.save('gauge.png')
-        self.screenshot = pixmap_to_pixels(pixmap)
-
-    def has_changed(self):
-        pixmap = self.get_screenshot_pixmap()
-        if DEBUG_GAUGE_SCREENSHOT: pixmap.save('gauge_check.png')
-        return self.screenshot != pixmap_to_pixels(pixmap)
-
-    def is_full(self):
-        pixmap = self.get_screenshot_pixmap()
-        if DEBUG_GAUGE_SCREENSHOT: pixmap.save('gauge_check.png')
-        pixels = pixmap_to_pixels(pixmap)
-        for pixel in pixels:
-            if similar(pixel, (228, 23, 0)):
-                return True
-        return False
-
-    def draw(self, painter: QPainter):
-        painter.setPen(QPen(QColor(0, 255, 0), 1))
-        rect = self.rect.expand(1)
-        painter.drawLine(QPointF(*rect.top_left().tuple()), QPointF(*rect.top_right().tuple()))
-        painter.drawLine(QPointF(*rect.top_right().tuple()), QPointF(*rect.bottom_right().tuple()))
-        painter.drawLine(QPointF(*rect.bottom_right().tuple()), QPointF(*rect.bottom_left().tuple()))
-        painter.drawLine(QPointF(*rect.bottom_left().tuple()), QPointF(*rect.top_left().tuple()))
 
 class Inventory:
     window = None

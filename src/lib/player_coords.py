@@ -6,6 +6,7 @@ from PyQt5.QtGui import QPen, QColor
 from src.lib.screen import get_region_pixmap
 from src.lib.struct import Vector, Rect
 
+
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 class PlayerCoords:
@@ -13,33 +14,43 @@ class PlayerCoords:
     rect = None
     size = None
     start_coords = None
+    prev_ocr_str = None
+    prev_lines = None
+    prev_split = None
+    prev_coords = None
 
     def __init__(self, window):
         self.window = window
         self.rect = Rect(
             0,
-            window.viewport_size.y * 0.02,
-            window.viewport_size.y * 0.25,
-            window.viewport_size.y * 0.07
+            window.viewport_size.y * 0.026,
+            window.viewport_size.y * 0.3,
+            window.viewport_size.y * 0.078
         )
         self.size = self.rect.size()
 
     def init(self):
-        self.take_screenshot()
         self.start_coords = self.read_coords()
+        print(self.prev_ocr_str)
 
     def take_screenshot(self):
         screen_top_left = self.window.to_screen(self.rect.top_left())
         get_region_pixmap(screen_top_left, self.size).save('.cache/map_grid_coords.png')
 
     def read_coords(self) -> Vector:
-        ocr_str = pytesseract.image_to_string(Image.open('.cache/map_grid_coords.png'), lang='fra')
-        lines = ocr_str.splitlines()
-        if len(lines) > 0:
-            second_line = lines[1]
-            coords = re.findall(r'[-+]\d+', second_line)
-            if len(coords) >= 2:
-                return Vector(int(coords[0]), int(coords[1]))
+        self.prev_coords = None
+        self.take_screenshot()
+        self.prev_ocr_str = pytesseract.image_to_string(Image.open('.cache/map_grid_coords.png'), lang='fra', config='--psm 6')
+        self.prev_lines = self.prev_ocr_str.splitlines()
+        if len(self.prev_lines) > 0:
+            second_line = self.prev_lines[1]
+            self.prev_split = re.findall(r'[-+]?\d+', second_line.replace('A', '4'))
+            if len(self.prev_split) >= 2:
+                x = int(self.prev_split[0])
+                y = int(self.prev_split[1])
+                self.prev_coords = Vector(x, y)
+                return self.prev_coords
+        raise Exception('Could not read player coords')
 
     def draw(self, painter):
         painter.setPen(QPen(QColor(255, 0, 0), 2))

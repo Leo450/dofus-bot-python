@@ -1,8 +1,12 @@
 from src.lib.screen_grid import ScreenGrid
-from src.lib.resource import RESOURCE_BARLEY, RESOURCE_HEMP
+from src.lib.resource import RESOURCE_NETTLE, RESOURCE_CLOVER, RESOURCE_BARLEY, RESOURCE_HEMP
 
 def screen_grid(window):
     grid = ScreenGrid(window)
+
+    grid.set_resource_node(RESOURCE_NETTLE, (26, 11))
+
+    grid.set_resource_node(RESOURCE_CLOVER, (9, 1))
 
     grid.set_resource_nodes(RESOURCE_BARLEY, [
         (12, 10),

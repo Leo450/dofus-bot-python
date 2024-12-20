@@ -1,5 +1,6 @@
 from pynput import keyboard
 
+
 listening = False
 handlers = {}
 

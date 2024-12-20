@@ -1,3 +1,7 @@
+RESOURCE_WATER = {
+    'name': 'Water',
+    'overlay_color': (0, 0, 255),
+}
 # ---- CROPS ----
 # Blé
 RESOURCE_WHEAT = {
@@ -57,4 +61,9 @@ RESOURCE_SAGE = {
     'name': 'Sage',
     'overlay_color': (0, 255, 0),
 }
-RESOURCE_PLANT = [RESOURCE_NETTLE, RESOURCE_SAGE]
+# Trèfle
+RESOURCE_CLOVER = {
+    'name': 'Clover',
+    'overlay_color': (0, 255, 0),
+}
+RESOURCE_PLANT = [RESOURCE_NETTLE, RESOURCE_SAGE, RESOURCE_CLOVER]

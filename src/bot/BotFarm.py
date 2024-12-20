@@ -16,7 +16,7 @@ class BotFarm:
     mover = None
 
     player_coords = None
-    farm_speed = 0.1
+    farm_speed = 0.05
     nb_loop = 0
 
     # Map
@@ -79,19 +79,30 @@ class BotFarm:
         if self.map_grid.get_nb_enabled_cells() == 0:
             raise Exception('No enabled map cell')
 
-        #print(BCOLORS.grey('Player is at: {}'.format(self.player_map_coords)))
-        closest_cell = self.map_grid.get_closest_cell(*self.player_coords.tuple(), self.visited_map_cells)
-        #print(BCOLORS.grey('Closest cell: {}'.format(closest_cell.coords)))
-
-        if closest_cell.coords != self.player_coords:
-            print(BCOLORS.red('> Player is not on closest map cell'))
-            await self.mover.go_to_map_cell(self.player_coords, closest_cell.coords)
-            self.player_coords = closest_cell.coords
-        else:
-            print(BCOLORS.green('> Player is on closest map cell'))
-
+        await self.move_to_closest_map_cell()
         await self.farm_current_map_cell()
         await self.farm_next_map_cell()
+
+    async def move_to_closest_map_cell(self):
+        closest_cell = self.map_grid.get_closest_cell(*self.player_coords.tuple(), self.visited_map_cells)
+
+        if closest_cell.coords != self.player_coords:
+            await self.mover.go_to_map_cell(self.player_coords, closest_cell.coords)
+            self.player_coords = closest_cell.coords
+
+            # Sleep: prevent reading player coords while black screen
+            await asyncio.sleep(0.1)
+            ocr_coords = self.player_coords_reader.read_coords()
+            if closest_cell.coords != ocr_coords:
+                if abs(closest_cell.coords.x) == abs(ocr_coords.x) and abs(closest_cell.coords.y) == abs(ocr_coords.y):
+                    # Don't trust OCR
+                    return
+                await asyncio.sleep(0.1)
+                ocr_coords = self.player_coords_reader.read_coords()
+                if closest_cell.coords != ocr_coords:
+                    print(BCOLORS.colorize(' >> Correcting player coords: {} -> {}'.format(closest_cell.coords, ocr_coords), BCOLORS.BG_LIGHT_RED + BCOLORS.BLACK + BCOLORS.BOLD))
+                    self.player_coords = ocr_coords
+                    return await self.move_to_closest_map_cell()
 
     async def farm_current_map_cell(self):
         self.load_screen_grid(self.player_coords)
@@ -148,7 +159,8 @@ class BotFarm:
             if self.inventory_reader.is_full():
                 raise Exception('Inventory is full')
 
-            await asyncio.sleep(self.farm_speed)
+            # Sleep: prevent cursor still success after fast switch
+            await asyncio.sleep(0.1)
             self.current_screen_cell.highlighted = False
             self.overlay.update()
 
@@ -160,7 +172,9 @@ class BotFarm:
         else:
             self.nb_empty_cell += 1
 
-            await asyncio.sleep(self.farm_speed)
+            # Sleep: prevent cursor still success after fast switch
+            await asyncio.sleep(0.1)
+
             self.current_screen_cell.highlighted = False
             self.overlay.update()
 

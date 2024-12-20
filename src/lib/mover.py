@@ -1,9 +1,7 @@
 import asyncio
-
-from PyQt5.QtCore import QPointF
-
 import src.lib.keyboard as keyboard
 import src.lib.mouse as mouse
+from PyQt5.QtCore import QPointF
 from PyQt5.QtGui import QPen, QColor, QPainter
 from src.lib.console import BCOLORS
 from src.lib.astar import PATH_LEFT, PATH_RIGHT, PATH_UP, PATH_DOWN
@@ -30,17 +28,19 @@ class Mover:
         self.minimap_reader.update_screenshot()
 
     async def go_to_map_cell(self, start: Vector, end: Vector):
-        print(BCOLORS.colorize(' >> Moving: from {} to {} '.format((start.x, start.y), (end.x, end.y)), BCOLORS.BG_LIGHT_PURPLE + BCOLORS.BLACK + BCOLORS.BOLD))
+        print(BCOLORS.colorize(' >> Moving: from {} to {} '.format((start.x, start.y), (end.x, end.y)), BCOLORS.BG_LIGHT_BLUE + BCOLORS.BLACK + BCOLORS.BOLD))
         path = self.map_grid.get_path(start, end)
         print(BCOLORS.purple('> Path: {}'.format(path)))
         await self.go_to_path(path)
-        print(BCOLORS.green('> Arrived at: {}'.format((end.x, end.y))))
+        print(BCOLORS.colorize(' >> Arrived at: {}'.format((end.x, end.y)), BCOLORS.BG_LIGHT_BLUE + BCOLORS.BLACK + BCOLORS.BOLD))
 
     async def go_to_path(self, path: list):
         if len(path) == 0:
             return
 
         #print(BCOLORS.grey('Going through path: {}'.format(path)))
+
+        await asyncio.sleep(.5)
 
         self.current_direction = path.pop(0)
         self.overlay.set_drawable('mover', self)
@@ -49,7 +49,6 @@ class Mover:
         self.current_direction = None
         self.overlay.remove_drawable('mover')
 
-        await asyncio.sleep(.5)
         await self.go_to_path(path)
 
     async def go_to_direction(self, direction):

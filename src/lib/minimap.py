@@ -4,6 +4,7 @@ from src.lib.console import BCOLORS
 from src.lib.screen import get_region_pixmap, pixmap_to_pixels
 from src.lib.struct import Vector
 
+
 DEBUG_SCREENSHOTS = False
 
 class Minimap:

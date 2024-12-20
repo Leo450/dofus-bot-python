@@ -7,7 +7,7 @@ from src.lib.struct import Vector
 def get_screen_size() -> Vector:
     return Vector(win32api.GetSystemMetrics(0), win32api.GetSystemMetrics(1))
 
-def get_taskbar_height() -> int:
+def get_taskbar_height():
     monitor_info = win32api.GetMonitorInfo(win32api.MonitorFromPoint((0, 0)))
     monitor_area = monitor_info.get("Monitor")
     work_area = monitor_info.get("Work")
