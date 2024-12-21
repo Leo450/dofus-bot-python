@@ -10,6 +10,9 @@ PATH_RIGHT = 'right'
 PATH_UP = 'up'
 PATH_DOWN = 'down'
 
+def manhattan_distance(start: Vector, end: Vector):
+    return abs(start.x - end.x) + abs(start.y - end.y)
+
 def astar(maze: list, start: Vector, end: Vector):
     if DEBUG_MAZE:
         print("Start: ", start)

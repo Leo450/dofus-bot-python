@@ -66,4 +66,9 @@ RESOURCE_CLOVER = {
     'name': 'Clover',
     'overlay_color': (0, 255, 0),
 }
-RESOURCE_PLANT = [RESOURCE_NETTLE, RESOURCE_SAGE, RESOURCE_CLOVER]
+# Menthe
+RESOURCE_MINT = {
+    'name': 'Mint',
+    'overlay_color': (0, 255, 0),
+}
+RESOURCE_PLANT = [RESOURCE_NETTLE, RESOURCE_SAGE, RESOURCE_CLOVER, RESOURCE_MINT]

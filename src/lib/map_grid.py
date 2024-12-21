@@ -1,6 +1,6 @@
 import importlib
 import numpy
-from src.lib.astar import astar, path_to_directions
+from src.lib.astar import astar, path_to_directions, manhattan_distance
 from src.lib.map_cell import MapCell
 from src.lib.struct import Vector, Rect
 
@@ -53,7 +53,7 @@ class MapGrid:
                 if (excludes is not None and cell in excludes) or cell.enabled == False: continue
 
                 # Manhattan distance
-                distance = abs(cell.coords.x - x) + abs(cell.coords.y - y)
+                distance = manhattan_distance(cell.coords, Vector(x, y))
                 # Euclidean distance
                 # distance = (cell.coords.x - x) ** 2 + (cell.coords.y - y) ** 2
                 if distance < min_distance:

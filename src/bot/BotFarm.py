@@ -1,5 +1,6 @@
 import asyncio
 import src.lib.mouse as mouse
+from src.lib.astar import manhattan_distance
 from src.lib.console import BCOLORS
 from src.lib.inventory import Inventory
 from src.lib.player_coords import PlayerCoords
@@ -90,19 +91,28 @@ class BotFarm:
             await self.mover.go_to_map_cell(self.player_coords, closest_cell.coords)
             self.player_coords = closest_cell.coords
 
+            # OCR correction
             # Sleep: prevent reading player coords while black screen
             await asyncio.sleep(0.1)
-            ocr_coords = self.player_coords_reader.read_coords()
-            if closest_cell.coords != ocr_coords:
-                if abs(closest_cell.coords.x) == abs(ocr_coords.x) and abs(closest_cell.coords.y) == abs(ocr_coords.y):
-                    # Don't trust OCR
-                    return
-                await asyncio.sleep(0.1)
+            try:
                 ocr_coords = self.player_coords_reader.read_coords()
-                if closest_cell.coords != ocr_coords:
-                    print(BCOLORS.colorize(' >> Correcting player coords: {} -> {}'.format(closest_cell.coords, ocr_coords), BCOLORS.BG_LIGHT_RED + BCOLORS.BLACK + BCOLORS.BOLD))
-                    self.player_coords = ocr_coords
-                    return await self.move_to_closest_map_cell()
+            except Exception as e:
+                return
+
+            # If OCR found same coords
+            if closest_cell.coords == ocr_coords:
+                return
+            # If OCR didn't read minus sign correctly
+            if abs(closest_cell.coords.x) == abs(ocr_coords.x) and abs(closest_cell.coords.y) == abs(ocr_coords.y):
+                return
+            # If OCR found too far away coords
+            if manhattan_distance(closest_cell.coords, ocr_coords) > 4:
+                return
+
+            # Correct player coords
+            print(BCOLORS.colorize(' >> Correcting player coords: {} -> {} '.format(closest_cell.coords, ocr_coords), BCOLORS.BG_LIGHT_RED + BCOLORS.BLACK + BCOLORS.BOLD))
+            self.player_coords = ocr_coords
+            return await self.move_to_closest_map_cell()
 
     async def farm_current_map_cell(self):
         self.load_screen_grid(self.player_coords)
@@ -165,7 +175,7 @@ class BotFarm:
             self.overlay.update()
 
             if self.nb_screen_cell == 1:
-                print(BCOLORS.yellow('> No more crops on screen'))
+                print(BCOLORS.yellow('> No more resource on screen'))
                 return
 
             await self.farm_next_screen_cell()
@@ -176,7 +186,7 @@ class BotFarm:
             self.overlay.update()
 
             if self.nb_empty_cell >= self.nb_screen_cell:
-                print(BCOLORS.yellow('> No more crops on screen'))
+                print(BCOLORS.yellow('> No more resource on screen'))
                 return
 
             await self.farm_next_screen_cell()

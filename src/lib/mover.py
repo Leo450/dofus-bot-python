@@ -32,7 +32,7 @@ class Mover:
         path = self.map_grid.get_path(start, end)
         print(BCOLORS.purple('> Path: {}'.format(path)))
         await self.go_to_path(path)
-        print(BCOLORS.colorize(' >> Arrived at: {}'.format((end.x, end.y)), BCOLORS.BG_LIGHT_BLUE + BCOLORS.BLACK + BCOLORS.BOLD))
+        print(BCOLORS.colorize(' >> Arrived at: {} '.format((end.x, end.y)), BCOLORS.BG_LIGHT_BLUE + BCOLORS.BLACK + BCOLORS.BOLD))
 
     async def go_to_path(self, path: list):
         if len(path) == 0:
