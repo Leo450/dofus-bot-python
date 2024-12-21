@@ -5,7 +5,7 @@ from src.lib.screen import get_region_pixmap, pixmap_to_pixels
 from src.lib.struct import Vector, Rect
 
 
-DEBUG_SCREENSHOTS = True
+DEBUG_SCREENSHOTS = False
 
 class InventoryGauge:
     window = None
